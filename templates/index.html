@@ -120,6 +120,7 @@
               let image = rows[i]['image'];
               let star = rows[i]['star'];
               let title = rows[i]['title'];
+              let num = rows[i]['num'];
 
               let star_image = '⭐'.repeat(star);
 
@@ -132,7 +133,7 @@
                                                     <p class="card-text">${desc}</p>
                                                     <p>${star_image}</p>
                                                     <p class="mycomment">${comment}</p>
-                                                    <button onclick="delete_data('${title}')">삭제</button>
+                                                    <button onclick="delete_data(${num})">삭제</button>
                                                 </div>
                                             </div>
                                         </div>`;
@@ -142,11 +143,11 @@
         });
       }
 
-      function delete_data(titleData) {
+      function delete_data(num) {
         $.ajax({
-          type: 'DELETE',
-          url: '/movie',
-          data: { title_give: titleData },
+          type: 'POST',
+          url: '/movie/delete',
+          data: { 'num_give': num },
           success: function (response) {
             alert(response['msg']);
             window.location.reload();

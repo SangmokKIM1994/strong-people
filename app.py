@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from pymongo import MongoClient
-client = MongoClient('mongodb+srv://test:sparta@cluster0.hwvablm.mongodb.net/Cluster0?retryWrites=true&w=majority')
+client = MongoClient('mongodb+srv://yeong0319:tkdahr$56@cluster0.3saool7.mongodb.net/cluster0?retryWrites=true&w=majority')
 db = client.dbsparta
 
 @app.route('/')
@@ -27,13 +27,16 @@ def movie_post():
     title = soup.select_one('meta[property="og:title"]')['content']
     image = soup.select_one('meta[property="og:image"]')['content']
     desc = soup.select_one('meta[property="og:description"]')['content']
+    movie_list = list(db.movies.find({}, {'_id': False}))
+    count = len(movie_list) + 1
 
     doc = {
         'title':title,
         'image':image,
         'desc':desc,
         'star':star_receive,
-        'comment':comment_receive
+        'comment':comment_receive,
+        'num' : count
     }
     db.movies.insert_one(doc)
 
@@ -43,11 +46,10 @@ def movie_post():
 def movie_get():
     movie_list = list(db.movies.find({}, {'_id': False}))
     return jsonify({'movies':movie_list})
-
-@app.route("/movie", methods=["DELETE"])
+@app.route("/movie/delete", methods=["POST"])
 def movie_delete():
-    title_receive = request.form['title_give']
-    db.movies.delete_one({'title': title_receive})
+    num_receive = request.form['num_give']
+    db.movies.delete_one({'num': int(num_receive)})
     return jsonify({'msg':'삭제 완료!'})
 
 if __name__ == '__main__':

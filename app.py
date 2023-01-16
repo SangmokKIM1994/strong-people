@@ -46,10 +46,11 @@ def movie_post():
 def movie_get():
     movie_list = list(db.movies.find({}, {'_id': False}))
     return jsonify({'movies':movie_list})
+
 @app.route("/movie/delete", methods=["POST"])
 def movie_delete():
-    num_receive = request.form['num_give']
-    db.movies.delete_one({'num': int(num_receive)})
+    title_receive = request.form['title_give']
+    db.movies.delete_one({'title': title_receive})
     return jsonify({'msg':'삭제 완료!'})
 
 if __name__ == '__main__':

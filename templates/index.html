@@ -123,7 +123,7 @@
       }
 
       const createMovieComponent = (data) => {
-        const { comment, desc, image, star, title, num } = data;
+        const { comment, desc, image, star, title, num, recommand } = data;
         const star_image = '⭐'.repeat(star);
 
         return `
@@ -135,11 +135,29 @@
                   <p class="card-text">${desc}</p>
                   <p>${star_image}</p>
                   <p class="mycomment">${comment}</p>
+                  <div>추천수 : ${recommand}</div>
                   <button onclick="delete_data('${title}')">삭제</button>
+                  <button onclick="recommandMovie('${title}')">추천</button>
                 </div>
               </div>
           </div>
         `;
+      };
+
+      const recommandMovie = (title) => {
+        $.ajax({
+          type: 'POST',
+          url: '/movie/recommand',
+          data: { title: title },
+          success: function (response) {
+            const { movies } = response;
+            $('#cards-box').empty();
+            for (let movie of movies) {
+              const movieComponent = createMovieComponent(movie);
+              $('#cards-box').append(movieComponent);
+            }
+          },
+        });
       };
 
       function delete_data(title) {

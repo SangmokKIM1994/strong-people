@@ -36,7 +36,8 @@ def movie_post():
         'desc':desc,
         'star':star_receive,
         'comment':comment_receive,
-        'num' : count
+        'num' : count,
+        'recommand': 0
     }
     db.movies.insert_one(doc)
 
@@ -46,6 +47,17 @@ def movie_post():
 def movie_get():
     movie_list = list(db.movies.find({}, {'_id': False}))
     return jsonify({'movies':movie_list})
+
+
+@app.route('/movie/recommand', methods=["POST"])
+def movie_recommand():
+    title = request.form['title']
+    targetMovie = db.movies.find_one({'title': title})
+    newRecommand = targetMovie['recommand'] + 1
+    db.movies.update_one({'title': title}, {'$set': {'recommand': newRecommand}})
+    movie_list = list(db.movies.find({}, {'_id': False}))
+    return jsonify({'movies':movie_list})
+
 
 @app.route("/movie/delete", methods=["POST"])
 def movie_delete():
